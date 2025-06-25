@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Alunos</title>
+</head>
+<body>
+    <h1>Listar Alunos</h1>
+
+    container onde os alunos serão inseridos
+    <div id="alunos"></div>
+
+    <script>
+        async function listarAlunos() {
+            const response = await fetch("http://localhost:3000/alunos/listar");
+            const json = await response.json();
+
+            let alunosDiv = document.getElementById("alunos");
+            alunosDiv.innerHTML = "";
+
+            for (let aluno of json) {
+                let novaDiv = document.createElement("div");
+                novaDiv.innerHTML = `
+                    <h1>${aluno.nome}</h1>
+                    <h2>${aluno.curso}</h2>
+                    <h3>${aluno.IRA}</h3>
+                    <a href='./cliente-put.html?id=${aluno.id}'>EDITAR</a>
+                    <button onclick='apagarAluno(${aluno.id})'>APAGAR</button>
+                    <hr/>
+                `;
+                alunosDiv.appendChild(novaDiv);
+            }
+        }
+
+        async function apagarAluno(id) {
+            const response = await fetch(`http://localhost:3000/alunos/apagar/${id}`, {
+                method: "DELETE"
+            });
+            const json = await response.json();
+            console.log(json);
+            listarAlunos(); // Atualiza a lista após apagar
+        }
+
+        listarAlunos();
+    </script>
+</body>
+</html>
